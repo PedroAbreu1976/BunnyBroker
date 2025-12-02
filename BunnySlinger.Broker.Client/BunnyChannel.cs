@@ -12,30 +12,35 @@ public class BunnyChannel : IAsyncDisposable {
 
     private readonly HubConnection _hubConnection;
 
-    public BunnyChannel(IOptions<BunnyBrokerOptions> options) {
+    public BunnyChannel(BunnyBrokerOptions? options = null) {
+	    if (options is null) {
+			options = new BunnyBrokerOptions();
+        }
 		_hubConnection = new HubConnectionBuilder()
 			.WithUrl(
-				options.Value.Url, 
+				options.Url, 
 				HttpTransportType.WebSockets, 
 				(o)=> {
-					o.AccessTokenProvider = options.Value.ConnectionOptions.AccessTokenProvider;
-					o.Headers = options.Value.ConnectionOptions.Headers ?? o.Headers;
-					o.ApplicationMaxBufferSize = options.Value.ConnectionOptions.ApplicationMaxBufferSize;
-					o.TransportMaxBufferSize = options.Value.ConnectionOptions.TransportMaxBufferSize;
-					o.ClientCertificates = options.Value.ConnectionOptions.ClientCertificates;
-					o.CloseTimeout = options.Value.ConnectionOptions.CloseTimeout;
-					o.Cookies = options.Value.ConnectionOptions.Cookies;
-					o.Credentials = options.Value.ConnectionOptions.Credentials;
-					o.DefaultTransferFormat = options.Value.ConnectionOptions.DefaultTransferFormat;
-					o.HttpMessageHandlerFactory = options.Value.ConnectionOptions.HttpMessageHandlerFactory;
-					o.Proxy = options.Value.ConnectionOptions.Proxy;
-					o.SkipNegotiation = options.Value.ConnectionOptions.SkipNegotiation;
-					o.Transports = options.Value.ConnectionOptions.Transports;
-					o.Url = options.Value.ConnectionOptions.Url;
-					o.WebSocketFactory = options.Value.ConnectionOptions.WebSocketFactory;
-					o.WebSocketConfiguration = options.Value.ConnectionOptions.WebSocketConfiguration;
-					o.UseDefaultCredentials = options.Value.ConnectionOptions.UseDefaultCredentials;
-                })
+					if (options != null) {
+						o.AccessTokenProvider = options.ConnectionOptions.AccessTokenProvider;
+						o.Headers = options.ConnectionOptions.Headers ?? o.Headers;
+						o.ApplicationMaxBufferSize = options.ConnectionOptions.ApplicationMaxBufferSize;
+						o.TransportMaxBufferSize = options.ConnectionOptions.TransportMaxBufferSize;
+						o.ClientCertificates = options.ConnectionOptions.ClientCertificates;
+						o.CloseTimeout = options.ConnectionOptions.CloseTimeout;
+						o.Cookies = options.ConnectionOptions.Cookies;
+						o.Credentials = options.ConnectionOptions.Credentials;
+						o.DefaultTransferFormat = options.ConnectionOptions.DefaultTransferFormat;
+						o.HttpMessageHandlerFactory = options.ConnectionOptions.HttpMessageHandlerFactory;
+						o.Proxy = options.ConnectionOptions.Proxy;
+						o.SkipNegotiation = options.ConnectionOptions.SkipNegotiation;
+						o.Transports = options.ConnectionOptions.Transports;
+						//o.Url = options.ConnectionOptions.Url;
+						o.WebSocketFactory = options.ConnectionOptions.WebSocketFactory;
+						o.WebSocketConfiguration = options.ConnectionOptions.WebSocketConfiguration;
+						o.UseDefaultCredentials = options.ConnectionOptions.UseDefaultCredentials;
+					}
+				})
 			.WithAutomaticReconnect()
 			.WithStatefulReconnect()
 			.Build();
@@ -43,10 +48,10 @@ public class BunnyChannel : IAsyncDisposable {
 		HttpConnectionOptions a = new HttpConnectionOptions {
 		};
 
-        _hubConnection.On<BunnyMessage, CancellationToken>("OnBunnyReceivedAsync", async (bunny, ct) =>
+        _hubConnection.On<BunnyMessage>("OnBunnyReceivedAsync", async (bunny) =>
 		{
 			if (BunnyReceived != null) {
-				await BunnyReceived.Invoke(bunny, ct);
+				await BunnyReceived.Invoke(bunny, default);
             }
 		});
 
@@ -70,18 +75,20 @@ public class BunnyChannel : IAsyncDisposable {
 	public Task StopAsync() => _hubConnection.StopAsync();
 
     public Task SendBunnyAsync(BunnyMessage bunny, CancellationToken ct = default) {
-		if (State != BunnyChannelState.Connected) {
-			int waitTime = 100;
-			while (State != BunnyChannelState.Connected) {
-				if (ct.IsCancellationRequested) {
-					throw new OperationCanceledException("The operation was cancelled before the BunnyChannel could send the message.", ct);
-                }
-				Task.Delay(waitTime, ct);
-				waitTime += 100;
-            }
-		}
+	    if (State != BunnyChannelState.Connected) {
+		    int waitTime = 100;
+		    while (State != BunnyChannelState.Connected) {
+			    if (ct.IsCancellationRequested) {
+				    throw new OperationCanceledException(
+					    "The operation was cancelled before the BunnyChannel could send the message.", ct);
+			    }
 
-		return _hubConnection.SendAsync("SendBunnyMessageAsync", bunny, ct);
+			    Task.Delay(waitTime, ct);
+			    waitTime += 100;
+		    }
+	    }
+
+	    return _hubConnection.SendAsync("SendBunnyMessageAsync", bunny, ct);
     }
 
     /// <summary>

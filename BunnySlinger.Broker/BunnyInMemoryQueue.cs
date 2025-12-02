@@ -34,7 +34,7 @@ public class BunnyInMemoryQueue(IHubContext<BunnyHub, IBunnyReceived> context, I
     }
 
 	public async Task<bool> OnBunnyDispatchedAsync(BunnyMessage bunny, CancellationToken ct = default) {
-		await context.Clients.All.OnBunnyReceivedAsync(bunny, ct);
+		await context.Clients.All.OnBunnyReceivedAsync(bunny);
 		await repository.SetProcessedAsync(bunny, ct);
         return true;
 	}

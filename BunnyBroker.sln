@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnySlinger.Broker.Client"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnySlinger.Broker.Contracts", "BunnySlinger.Broker.Contracts\BunnySlinger.Broker.Contracts.csproj", "{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBroker", "ExampleBroker\ExampleBroker.csproj", "{D52E4B49-96B8-403F-B764-9A504F22BB96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleClient", "ExampleClient\ExampleClient.csproj", "{0E44D03E-EE8E-4212-9259-296DE7273E07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D52E4B49-96B8-403F-B764-9A504F22BB96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D52E4B49-96B8-403F-B764-9A504F22BB96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D52E4B49-96B8-403F-B764-9A504F22BB96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D52E4B49-96B8-403F-B764-9A504F22BB96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E44D03E-EE8E-4212-9259-296DE7273E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E44D03E-EE8E-4212-9259-296DE7273E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E44D03E-EE8E-4212-9259-296DE7273E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E44D03E-EE8E-4212-9259-296DE7273E07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,8 @@
-﻿namespace BunnySlinger.Broker;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+
+namespace BunnySlinger.Broker;
 
 public class Worker(BunnyInMemoryQueue queue, ILogger<Worker> logger) : BackgroundService
 {
