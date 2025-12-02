@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Options;
 
 namespace BunnyBroker.Client;
 
 public class BunnyChannel : IAsyncDisposable {
 	public event Func<Exception?, Task>? StatusChanged;
-	public event Func<BunnyMessage, CancellationToken, Task>? BunnyReceived;
+	public event Func<object, Guid, Task>? BunnyReceived;
 
     private readonly HubConnection _hubConnection;
 
@@ -18,8 +17,8 @@ public class BunnyChannel : IAsyncDisposable {
         }
 		_hubConnection = new HubConnectionBuilder()
 			.WithUrl(
-				options.Url, 
-				HttpTransportType.WebSockets, 
+				$"{options.Url.TrimEnd('/')}/bunny-hub", 
+                HttpTransportType.WebSockets, 
 				(o)=> {
 					if (options != null) {
 						o.AccessTokenProvider = options.ConnectionOptions.AccessTokenProvider;
@@ -51,7 +50,7 @@ public class BunnyChannel : IAsyncDisposable {
         _hubConnection.On<BunnyMessage>("OnBunnyReceivedAsync", async (bunny) =>
 		{
 			if (BunnyReceived != null) {
-				await BunnyReceived.Invoke(bunny, default);
+                await BunnyReceived.Invoke(bunny.ToBunny()!, bunny.Id);
             }
 		});
 
@@ -74,7 +73,7 @@ public class BunnyChannel : IAsyncDisposable {
 
 	public Task StopAsync() => _hubConnection.StopAsync();
 
-    public Task SendBunnyAsync(BunnyMessage bunny, CancellationToken ct = default) {
+    private Task SendBunnyAsync(BunnyMessage bunny, CancellationToken ct = default) {
 	    if (State != BunnyChannelState.Connected) {
 		    int waitTime = 100;
 		    while (State != BunnyChannelState.Connected) {
@@ -89,6 +88,17 @@ public class BunnyChannel : IAsyncDisposable {
 	    }
 
 	    return _hubConnection.SendAsync("SendBunnyMessageAsync", bunny, ct);
+    }
+
+    public Task SendBunnyAsync(object bunny, Guid? id = null, CancellationToken ct = default) {
+	    return SendBunnyAsync(
+		    new BunnyMessage {
+			    Id = id ?? Guid.NewGuid(),
+			    Body = System.Text.Json.JsonSerializer.Serialize(bunny),
+			    CreatedAt = DateTime.UtcNow,
+			    BunnyType = bunny.GetType().FullName!,
+			    IsProcessed = false
+		    }, ct);
     }
 
     /// <summary>

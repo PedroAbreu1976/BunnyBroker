@@ -1,10 +1,9 @@
-﻿using BunnyBroker.Client;
-using BunnyBroker.Contracts;
-
+﻿using System.Text.Json;
+using BunnyBroker.Client;
 
 await Task.Delay(2000);
 
-var channel = new BunnyChannel(new BunnyBrokerOptions{ Url = "https://localhost:7110/bunny-hub" });
+await using var channel = new BunnyChannel(new BunnyBrokerOptions{ Url = "https://localhost:7110" });
 channel.StatusChanged += async (ex) =>
 {
     if (ex != null)
@@ -18,9 +17,9 @@ channel.StatusChanged += async (ex) =>
     await Task.CompletedTask;
 };
 
-channel.BunnyReceived += async (bunny, ct) =>
+channel.BunnyReceived += async (bunny, id) =>
 {
-    Console.WriteLine($"Received Bunny: {bunny.Body}");
+    Console.WriteLine($"[{id}]: {JsonSerializer.Serialize(bunny)}");
     await Task.CompletedTask;
 };
 
@@ -32,12 +31,6 @@ Console.WriteLine("Enter messages to send (empty line to quit):");
 
 var message = Console.ReadLine();
 while (!string.IsNullOrWhiteSpace(message)) {
-	await channel.SendBunnyAsync(new BunnyMessage
-	{
-		Id = Guid.NewGuid(),
-		Body = message,
-		BunnyType = typeof(string).FullName,
-		CreatedAt = DateTime.UtcNow
-	});
+	await channel.SendBunnyAsync(message);
 	message = Console.ReadLine();
 }
