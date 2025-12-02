@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BunnySlinger.Broker.Client\BunnySlinger.Broker.Client.csproj" />
+    <ProjectReference Include="..\BunnySlinger.Broker.Client\BunnyBroker.Client.csproj" />
   </ItemGroup>
 
 </Project>

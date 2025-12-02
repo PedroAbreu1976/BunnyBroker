@@ -28,12 +28,16 @@ channel.BunnyReceived += async (bunny, ct) =>
 
 await channel.StartAsync();
 
-await channel.SendBunnyAsync(new BunnyMessage {
-	Id = Guid.NewGuid(),
-	Body = "TEST BUNNY MESSAGE",
-	BunnyType = typeof(string).FullName,
-    CreatedAt = DateTime.UtcNow
-});
+Console.WriteLine("Enter messages to send (empty line to quit):");
 
-Console.WriteLine("Press any key to exit...");
-Console.ReadKey();
+var message = Console.ReadLine();
+while (!string.IsNullOrWhiteSpace(message)) {
+	await channel.SendBunnyAsync(new BunnyMessage
+	{
+		Id = Guid.NewGuid(),
+		Body = message,
+		BunnyType = typeof(string).FullName,
+		CreatedAt = DateTime.UtcNow
+	});
+	message = Console.ReadLine();
+}
