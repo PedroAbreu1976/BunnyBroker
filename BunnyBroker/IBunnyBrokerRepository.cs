@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
 
-using BunnySlinger.Broker.Contracts;
+using BunnyBroker.Contracts;
 
 
-namespace BunnySlinger.Broker;
+namespace BunnyBroker;
 
 public interface IBunnyBrokerRepository {
     Task<IEnumerable<BunnyMessage>> GetAllAsync(CancellationToken ct = default);

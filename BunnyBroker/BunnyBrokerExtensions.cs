@@ -1,4 +1,4 @@
-﻿namespace BunnySlinger.Broker;
+﻿namespace BunnyBroker;
 
 public static class BunnyBrokerExtensions {
     public static IServiceCollection AddBunnyBroker(this IServiceCollection services) {

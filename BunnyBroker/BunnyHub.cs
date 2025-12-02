@@ -1,8 +1,8 @@
-﻿using BunnySlinger.Broker.Contracts;
+﻿using BunnyBroker.Contracts;
 
 using Microsoft.AspNetCore.SignalR;
 
-namespace BunnySlinger.Broker;
+namespace BunnyBroker;
 
 public class BunnyHub(BunnyInMemoryQueue queue, ILogger<BunnyHub> logger) : Hub<IBunnyReceived> {
 	/// <summary>

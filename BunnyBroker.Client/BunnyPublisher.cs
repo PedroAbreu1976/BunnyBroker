@@ -1,7 +1,7 @@
-﻿using BunnySlinger.Broker.Contracts;
+﻿using BunnyBroker.Contracts;
 
 
-namespace BunnySlinger.Broker.Client;
+namespace BunnyBroker.Client;
 
 internal class BunnyPublisher(BunnyChannel channel) {
     public Task PublishAsync(BunnyMessage bunnyMessage, CancellationToken cancellationToken = default) =>

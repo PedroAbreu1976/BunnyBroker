@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 
 
-namespace BunnySlinger.Broker;
+namespace BunnyBroker;
 
 public class Worker(BunnyInMemoryQueue queue, ILogger<Worker> logger) : BackgroundService
 {

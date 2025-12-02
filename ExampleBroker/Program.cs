@@ -1,4 +1,4 @@
-using BunnySlinger.Broker;
+using BunnyBroker;
 
 
 var builder = WebApplication.CreateBuilder(args);

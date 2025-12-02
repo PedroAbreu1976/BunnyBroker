@@ -1,10 +1,10 @@
-﻿using BunnySlinger.Broker.Contracts;
+﻿using BunnyBroker.Contracts;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Options;
 
-namespace BunnySlinger.Broker.Client;
+namespace BunnyBroker.Client;
 
 public class BunnyChannel : IAsyncDisposable {
 	public event Func<Exception?, Task>? StatusChanged;

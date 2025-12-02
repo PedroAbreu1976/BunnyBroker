@@ -1,4 +1,4 @@
-﻿namespace BunnySlinger.Broker.Contracts
+﻿namespace BunnyBroker.Contracts
 {
     public class BunnyMessage
     {

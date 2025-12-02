@@ -1,4 +1,4 @@
-﻿namespace BunnySlinger.Broker.Client;
+﻿namespace BunnyBroker.Client;
 public enum BunnyChannelState
 {
 	Disconnected = 0,

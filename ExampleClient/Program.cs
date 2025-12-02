@@ -1,5 +1,5 @@
-﻿using BunnySlinger.Broker.Client;
-using BunnySlinger.Broker.Contracts;
+﻿using BunnyBroker.Client;
+using BunnyBroker.Contracts;
 
 
 await Task.Delay(2000);

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Threading.Channels;
 
-using BunnySlinger.Broker.Contracts;
+using BunnyBroker.Contracts;
 
 
-namespace BunnySlinger.Broker;
+namespace BunnyBroker;
 
 public class BunnyInMemoryQueue(IHubContext<BunnyHub, IBunnyReceived> context, IBunnyBrokerRepository repository)
 {

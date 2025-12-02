@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36327.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker", "BunnySlinger.Broker\BunnyBroker.csproj", "{F9261540-385B-4CE4-B329-0129940A44DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker", "BunnyBroker\BunnyBroker.csproj", "{F9261540-385B-4CE4-B329-0129940A44DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker.Client", "BunnySlinger.Broker.Client\BunnyBroker.Client.csproj", "{B32DAD1F-CFBC-4252-B02A-A8E706E1010D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker.Client", "BunnyBroker.Client\BunnyBroker.Client.csproj", "{B32DAD1F-CFBC-4252-B02A-A8E706E1010D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker.Contracts", "BunnySlinger.Broker.Contracts\BunnyBroker.Contracts.csproj", "{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BunnyBroker.Contracts", "BunnyBroker.Contracts\BunnyBroker.Contracts.csproj", "{EAB9FA53-4C78-4E3C-98D4-8FB1D2D2C860}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBroker", "ExampleBroker\ExampleBroker.csproj", "{D52E4B49-96B8-403F-B764-9A504F22BB96}"
 EndProject
