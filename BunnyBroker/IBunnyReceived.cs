@@ -5,6 +5,6 @@ namespace BunnyBroker
 {
     public interface IBunnyReceived
     {
-        Task OnBunnyReceivedAsync(BunnyMessage bunny);
+        Task OnBunnyReceivedAsync(BunnyMessageItem bunny);
     }
 }

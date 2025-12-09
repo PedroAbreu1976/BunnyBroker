@@ -1,10 +1,14 @@
 ﻿using BunnyBroker.Contracts;
-
+using BunnyBroker.Workers;
 using Microsoft.AspNetCore.SignalR;
+
+using BunnyMessageItem = BunnyBroker.Contracts.BunnyMessageItem;
+using BunnyTypeRegistry = BunnyBroker.Entities.BunnyTypeRegistry;
+
 
 namespace BunnyBroker;
 
-public class BunnyHub(BunnyInMemoryQueue queue, ILogger<BunnyHub> logger) : Hub<IBunnyReceived> {
+public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQueue, BunnyLogQueue logQueue, ILogger<BunnyHub> logger) : Hub<IBunnyReceived> {
 	/// <summary>
 	/// Called when a new connection is established with the hub.
 	/// </summary>
@@ -22,6 +26,38 @@ public class BunnyHub(BunnyInMemoryQueue queue, ILogger<BunnyHub> logger) : Hub<
 	}
 
 	public async Task SendBunnyMessageAsync(BunnyMessage bunny) {
-		await queue.SendAsync(bunny);
+		logger.LogInformation($"Bunny sent: {bunny.Id}");
+		await senderQueue.SendAsync(bunny);
+    }
+
+	public async Task StartObserving(string bunnyType, string uniqueHandlerName) {
+		logger.LogInformation($"Observing: {uniqueHandlerName} - {bunnyType}");
+        await registerQueue.SendAsync(new BunnyTypeRegistry {
+			BunnyHandlerType = uniqueHandlerName,
+			BunnyType = bunnyType
+        });
+		await Groups.AddToGroupAsync(Context.ConnectionId, bunnyType);
+	}
+
+	public async Task BunnyProcessed(Guid bunnyId, string uniqueHandlerName, bool sucess) {
+		logger.LogInformation($"Bunny processed: {uniqueHandlerName} - {bunnyId} = {sucess}");
+        await logQueue.SendAsync(new Entities.BunnyLog {
+			BunnyHandlerType = uniqueHandlerName,
+			BunnyMessageId = bunnyId,
+			ProcessedAt = DateTime.UtcNow,
+			Sucess = true
+		});
+    }
+
+	public async Task BunnyFailed(Guid bunnyId, string uniqueHandlerName, Exception ex) {
+		logger.LogInformation($"Bunny failed: {uniqueHandlerName} - {bunnyId} = {ex.Message}");
+        await logQueue.SendAsync(new Entities.BunnyLog
+		{
+			BunnyHandlerType = uniqueHandlerName,
+			BunnyMessageId = bunnyId,
+			ProcessedAt = DateTime.UtcNow,
+			Sucess = false,
+			ErrorMessage = ex.Message
+        });
     }
 }

@@ -4,12 +4,12 @@ using System.Threading.Channels;
 using BunnyBroker.Contracts;
 
 
-namespace BunnyBroker;
+namespace BunnyBroker.Workers;
 
-public class BunnyInMemoryQueue(IHubContext<BunnyHub, IBunnyReceived> context, IBunnyBrokerRepository repository)
+public class BunnySenderQueue(IHubContext<BunnyHub, IBunnyReceived> context)
 {
 	private readonly Channel<BunnyMessage> _queue =
-		Channel.CreateBounded<BunnyMessage>(new BoundedChannelOptions(100)
+		Channel.CreateBounded<BunnyMessage>(new BoundedChannelOptions(1000)
 		{
 			FullMode = BoundedChannelFullMode.Wait,
 			SingleReader = false,
@@ -26,7 +26,6 @@ public class BunnyInMemoryQueue(IHubContext<BunnyHub, IBunnyReceived> context, I
 
 	public async ValueTask SendAsync(BunnyMessage message, CancellationToken ct = default) {
 		await _queue.Writer.WriteAsync(message, ct);
-		await repository.AddAsync(message, ct);
 	}
 
 	public ValueTask<BunnyMessage> CatchAsync(CancellationToken ct = default) {
@@ -34,8 +33,7 @@ public class BunnyInMemoryQueue(IHubContext<BunnyHub, IBunnyReceived> context, I
     }
 
 	public async Task<bool> OnBunnyDispatchedAsync(BunnyMessage bunny, CancellationToken ct = default) {
-		await context.Clients.All.OnBunnyReceivedAsync(bunny);
-		await repository.SetProcessedAsync(bunny, ct);
+		await context.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);
         return true;
 	}
 }

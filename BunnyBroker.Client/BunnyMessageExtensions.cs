@@ -17,4 +17,9 @@ public static class BunnyMessageExtensions {
 	public static object? ToBunny(this BunnyMessage message) {
 		return JsonSerializer.Deserialize(message.Body, Type.GetType(message.BunnyType)!);
 	}
+
+	internal static object? ToBunny(this BunnyMessage message, IEnumerable<Type> types) {
+		var type = types.First(x => x.FullName == message.BunnyType);
+        return JsonSerializer.Deserialize(message.Body, type);
+	}
 }

@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
-
-namespace BunnyBroker.Contracts;
+namespace BunnyBroker.Entities;
 
 public class BunnyTypeRegistry
 {
@@ -10,5 +8,7 @@ public class BunnyTypeRegistry
 
 	[Key]
 	public string BunnyHandlerType { get; set; }
+
+	public List<BunnyLog> BunnyLogs { get; set; }
 }
 
