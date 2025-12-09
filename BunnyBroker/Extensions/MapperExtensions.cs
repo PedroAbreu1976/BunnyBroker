@@ -11,14 +11,15 @@ internal static class MapperExtensions {
 		};
 	}
 
-	public static Contracts.BunnyMessage MapToContractStatus(this BunnyMessage bunny)
+	public static Contracts.BunnyMessageInfo MapToContractInfo(this BunnyMessage bunny)
 	{
-		return new Contracts.BunnyMessage
+		return new Contracts.BunnyMessageInfo
 		{
 			Id = bunny.Id,
 			Body = bunny.Body,
 			CreatedAt = bunny.CreatedAt,
 			BunnyType = bunny.BunnyType,
+			Logs = bunny.BunnyLogs.Map(x=>x.MapToInfo())
         };
 	}
 
@@ -49,7 +50,18 @@ internal static class MapperExtensions {
         };
     }
 
-	private static IEnumerable<TResult> Map<T, TResult>(this IEnumerable<T> source, Func<T,TResult> mapper)
+	private static Contracts.LogInfo MapToInfo(this BunnyLog log)
+	{
+		return new Contracts.LogInfo
+        {
+			BunnyHandlerType = log.BunnyHandlerType,
+			ProcessedAt = log.ProcessedAt,
+			Sucess = log.Sucess,
+			ErrorMessage = log.ErrorMessage
+		};
+	}
+
+    private static IEnumerable<TResult> Map<T, TResult>(this IEnumerable<T> source, Func<T,TResult> mapper)
 	{
 		return source?.Select(item => mapper(item)) ?? Enumerable.Empty<TResult>();
     }

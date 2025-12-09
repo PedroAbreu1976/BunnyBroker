@@ -22,10 +22,10 @@ internal static class ApiExtensions {
 				"/bunnies/{id:guid}", async (Guid id, IBunnyMessageRepository repository, CancellationToken ct = default) =>
 				{
 					var result = await repository.GetByIdAsync(id, ct);
-					return Results.Ok(result.MapToContractStatus());
+					return Results.Ok(result.MapToContractInfo());
 				})
 			.WithName("GetBunny")
-			.Produces<BunnyMessage>();
+			.Produces<BunnyMessageInfo>();
 
         app.MapGet("/registries", async (IBunnyTypeRegistryRepository repository, CancellationToken ct = default) =>
 			{
