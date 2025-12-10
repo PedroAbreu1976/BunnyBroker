@@ -8,6 +8,9 @@ public interface IBunnyMessageRepository {
     Task<BunnyMessage> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<IEnumerable<BunnyMessage>> GetByTypeAsync(string type, DateTime? fromDate = null, DateTime? toDate = null, CancellationToken ct = default);
     Task<IEnumerable<BunnyMessage>> GetAllAsync(DateTime? fromDate = null, DateTime? toDate = null, CancellationToken ct = default);
+
+    Task<IEnumerable<BunnyMessage>> GetUnprocessedForHandler(
+	    string handlerType, DateTime? fromDate = null, CancellationToken ct = default);
     Task AddAsync(BunnyMessage message, CancellationToken ct = default);
 }
 
@@ -65,6 +68,24 @@ public class BunnyMessageRepository(BunnyDbContext context) : IBunnyMessageRepos
 			.AsNoTracking()
             .ToListAsync(ct);
     }
+
+	public async Task<IEnumerable<BunnyMessage>> GetUnprocessedForHandler(
+		string handlerType, DateTime? fromDate = null, CancellationToken ct = default) {
+		var bunnyType = await context.BunnyTypeRegistries.Where(x => x.BunnyHandlerType == handlerType)
+			.Select(x => x.BunnyType)
+			.FirstOrDefaultAsync(ct);
+		if (bunnyType == null) {
+			return Enumerable.Empty<BunnyMessage>();
+		}
+
+		return await context.BunnyMessages
+			.Where(m => m.BunnyType == bunnyType &&
+						(fromDate == null || m.CreatedAt >= fromDate) &&
+						!m.BunnyLogs.Any(l => l.BunnyHandlerType == handlerType && l.ProcessedAt != null))
+			.AsNoTracking()
+			.ToListAsync(ct);
+    }
+
 	public async Task AddAsync(BunnyMessage message, CancellationToken ct = default) {
 		context.BunnyMessages.Add(message);
 		await context.SaveChangesAsync(ct);

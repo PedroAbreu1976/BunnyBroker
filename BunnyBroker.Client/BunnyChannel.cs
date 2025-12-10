@@ -19,7 +19,9 @@ public class BunnyChannel : IAsyncDisposable {
 				$"{options.Url.TrimEnd('/')}/bunny-hub", 
                 HttpTransportType.WebSockets, 
 				(o)=> {
-					if (options != null) {
+					o.Credentials = new System.Net.NetworkCredential(options.User, options.Password);
+					o.UseDefaultCredentials = false;
+                    if (options != null) {
 						o.AccessTokenProvider = options.ConnectionOptions.AccessTokenProvider;
 						o.Headers = options.ConnectionOptions.Headers ?? o.Headers;
 						o.ApplicationMaxBufferSize = options.ConnectionOptions.ApplicationMaxBufferSize;
@@ -27,7 +29,7 @@ public class BunnyChannel : IAsyncDisposable {
 						o.ClientCertificates = options.ConnectionOptions.ClientCertificates;
 						o.CloseTimeout = options.ConnectionOptions.CloseTimeout;
 						o.Cookies = options.ConnectionOptions.Cookies;
-						o.Credentials = options.ConnectionOptions.Credentials;
+						//o.Credentials = options.ConnectionOptions.Credentials;
 						o.DefaultTransferFormat = options.ConnectionOptions.DefaultTransferFormat;
 						o.HttpMessageHandlerFactory = options.ConnectionOptions.HttpMessageHandlerFactory;
 						o.Proxy = options.ConnectionOptions.Proxy;
@@ -36,7 +38,7 @@ public class BunnyChannel : IAsyncDisposable {
 						//o.Url = options.ConnectionOptions.Url;
 						o.WebSocketFactory = options.ConnectionOptions.WebSocketFactory;
 						o.WebSocketConfiguration = options.ConnectionOptions.WebSocketConfiguration;
-						o.UseDefaultCredentials = options.ConnectionOptions.UseDefaultCredentials;
+						//o.UseDefaultCredentials = options.ConnectionOptions.UseDefaultCredentials;
 					}
 				})
 			.WithAutomaticReconnect()

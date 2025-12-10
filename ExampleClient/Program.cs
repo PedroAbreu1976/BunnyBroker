@@ -3,7 +3,7 @@ using BunnyBroker.Client;
 
 await Task.Delay(2000);
 
-await using var channel = new BunnyChannel(new BunnyBrokerOptions { Url = "https://localhost:7110" });
+await using var channel = new BunnyChannel(new BunnyBrokerOptions { Url = "https://localhost:7110", User = "admin", Password = "admin"});
 await channel.StartAsync();
 
 await channel.AddObserver<MessageLenght>("1", msg =>
