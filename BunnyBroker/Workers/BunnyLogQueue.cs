@@ -4,7 +4,7 @@ using BunnyBroker.Entities;
 
 namespace BunnyBroker.Workers;
 
-public class BunnyLogQueue(IHubContext<BunnyHub, IBunnyReceived> context)
+public class BunnyLogQueue(IHubContext<BunnyHub, IBunnyObserver> context)
 {
 	private readonly Channel<BunnyLog> _queue =
 		Channel.CreateBounded<BunnyLog>(new BoundedChannelOptions(1000)

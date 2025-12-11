@@ -27,8 +27,15 @@ namespace BunnyBroker.Repository
                 .ToListAsync(ct);
         }
 	    public async Task AddAsync(BunnyTypeRegistry typeRegistry, CancellationToken ct = default) {
-		    context.BunnyTypeRegistries.Add(typeRegistry);
-            await context.SaveChangesAsync(ct);
-        }
+		    var exists = await context.BunnyTypeRegistries
+			    .Where(x => x.BunnyType == typeRegistry.BunnyType)
+			    .Where(x => x.BunnyHandlerType == typeRegistry.BunnyHandlerType)
+			    .AnyAsync(ct);
+
+		    if (!exists) {
+			    context.BunnyTypeRegistries.Add(typeRegistry);
+			    await context.SaveChangesAsync(ct);
+		    }
+	    }
     }
 }

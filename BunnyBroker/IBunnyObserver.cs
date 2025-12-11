@@ -3,7 +3,7 @@
 
 namespace BunnyBroker
 {
-    public interface IBunnyReceived
+    public interface IBunnyObserver
     {
         Task OnBunnyReceivedAsync(BunnyMessageItem bunny);
     }

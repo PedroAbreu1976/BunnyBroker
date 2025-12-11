@@ -6,7 +6,7 @@ using BunnyBroker.Contracts;
 
 namespace BunnyBroker.Workers;
 
-public class BunnySenderQueue(IHubContext<BunnyHub, IBunnyReceived> context)
+public class BunnySenderQueue()
 {
 	private readonly Channel<BunnyMessage> _queue =
 		Channel.CreateBounded<BunnyMessage>(new BoundedChannelOptions(1000)
@@ -31,10 +31,5 @@ public class BunnySenderQueue(IHubContext<BunnyHub, IBunnyReceived> context)
 	public ValueTask<BunnyMessage> CatchAsync(CancellationToken ct = default) {
 		return _queue.Reader.ReadAsync(ct);
     }
-
-	public async Task<bool> OnBunnyDispatchedAsync(BunnyMessage bunny, CancellationToken ct = default) {
-        await context.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);
-        return true;
-	}
 }
 

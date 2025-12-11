@@ -1,14 +1,12 @@
 ﻿using BunnyBroker.Contracts;
 using BunnyBroker.Workers;
 using Microsoft.AspNetCore.SignalR;
-
 using BunnyMessageItem = BunnyBroker.Contracts.BunnyMessageItem;
 using BunnyTypeRegistry = BunnyBroker.Entities.BunnyTypeRegistry;
 
-
 namespace BunnyBroker;
 
-public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQueue, BunnyLogQueue logQueue, ILogger<BunnyHub> logger) : Hub<IBunnyReceived> {
+public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQueue, BunnyLogQueue logQueue, ILogger<BunnyHub> logger) : Hub<IBunnyObserver> {
 	/// <summary>
 	/// Called when a new connection is established with the hub.
 	/// </summary>

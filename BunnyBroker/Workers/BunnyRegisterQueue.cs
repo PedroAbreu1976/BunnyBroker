@@ -4,7 +4,7 @@ using BunnyBroker.Entities;
 
 namespace BunnyBroker.Workers;
 
-public class BunnyRegisterQueue(IHubContext<BunnyHub, IBunnyReceived> context)
+public class BunnyRegisterQueue(IHubContext<BunnyHub, IBunnyObserver> context)
 {
 	private readonly Channel<BunnyTypeRegistry> _queue =
 		Channel.CreateBounded<BunnyTypeRegistry>(new BoundedChannelOptions(1000)
