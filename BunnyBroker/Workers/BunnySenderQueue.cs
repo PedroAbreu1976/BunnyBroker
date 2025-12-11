@@ -33,7 +33,7 @@ public class BunnySenderQueue(IHubContext<BunnyHub, IBunnyReceived> context)
     }
 
 	public async Task<bool> OnBunnyDispatchedAsync(BunnyMessage bunny, CancellationToken ct = default) {
-		await context.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);
+        await context.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);
         return true;
 	}
 }

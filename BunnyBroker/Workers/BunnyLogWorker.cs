@@ -7,10 +7,10 @@ public class BunnyLogWorker(BunnyLogQueue queue, IServiceScopeFactory scopeFacto
 	protected override async Task ExecuteAsync(CancellationToken ct) {
 		while (await queue.WaitAsync(ct))
 		{
-			var entity = await queue.CatchAsync(ct);
+			var bunnyLog = await queue.CatchAsync(ct);
 			using (var scope = scopeFactory.CreateScope()) {
 				var repository = scope.ServiceProvider.GetRequiredService<IBunnyLogRepository>();
-				await repository.AddAsync(entity);
+				await repository.UpdateAsync(bunnyLog);
             }
 		}
     }

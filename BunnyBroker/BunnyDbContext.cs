@@ -11,7 +11,12 @@ namespace BunnyBroker
 	    {
 	    }
 
-	    public DbSet<BunnyMessage> BunnyMessages { get; set; } = null!;
+	    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	    {
+		    optionsBuilder.AddInterceptors(new SaveBunnyMessageInterceptor());
+	    }
+
+        public DbSet<BunnyMessage> BunnyMessages { get; set; } = null!;
 	    public DbSet<BunnyTypeRegistry> BunnyTypeRegistries { get; set; } = null!;
 		public DbSet<BunnyLog> BunnyLogs { get; set; } = null!; 
 		public DbSet<User> Users { get; set; } = null!;

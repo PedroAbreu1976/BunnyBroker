@@ -45,7 +45,8 @@ public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQ
 			BunnyHandlerType = uniqueHandlerName,
 			BunnyMessageId = bunnyId,
 			ProcessedAt = DateTime.UtcNow,
-			Sucess = true
+			Sucess = true,
+			ErrorMessage = null
 		});
     }
 
