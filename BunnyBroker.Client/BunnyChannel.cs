@@ -45,18 +45,20 @@ public class BunnyChannel : IAsyncDisposable {
 			.WithStatefulReconnect()
 			.Build();
 
-
-		_hubConnection.On<BunnyMessage>("OnBunnyReceivedAsync", async (bunny) => {
-			var content = bunny.ToBunny(_dicHandlers.Keys);
+		_hubConnection.On<BunnyMessageProcessRequest>("OnBunnyReceivedAsync", async (bunny) => {
+			var content = bunny.Message.ToBunny(_dicHandlers.Keys);
             if (_dicHandlers.TryGetValue(content!.GetType(), out var handlers)) {
 				foreach (var handler in handlers) {
-					try {
-						var result = await handler.Handler(content!);
-						await BunnyProcessed(bunny.Id, handler.Name, result);
-					}catch(Exception ex) {
-						await BunnyFailed(bunny.Id, handler.Name, ex);
-                    }
-                }
+					if (bunny.CanProcess(_hubConnection, handler.Name)) {
+						try {
+							var result = await handler.Handler(content!);
+							await BunnyProcessed(bunny.Message.Id, handler.Name, result);
+						}
+						catch (Exception ex) {
+							await BunnyFailed(bunny.Message.Id, handler.Name, ex);
+						}
+					}
+				}
 			}
 		});
 
@@ -80,12 +82,16 @@ public class BunnyChannel : IAsyncDisposable {
 	public Task StopAsync(CancellationToken ct = default) => _hubConnection.StopAsync(ct);
 
 	public Task AddObserver<TBunny>(string uniqueHandlerName, Func<TBunny, Task<bool>> onBunnyReceived, CancellationToken ct = default) {
-		
+		// TODO: use concurrent dictionary
 		var type = typeof(TBunny);
         if (!_dicHandlers.TryGetValue(type, out var items))
 		{
 			items = new();
 			_dicHandlers.Add(type, items);
+        }
+
+        if (items.Any(x => x.Name == uniqueHandlerName)) {
+	        throw new Exception("Duplicate unique handler name");
         }
 		items.Add((uniqueHandlerName, obj => onBunnyReceived((TBunny)obj)));
 

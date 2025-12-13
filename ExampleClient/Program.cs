@@ -1,6 +1,9 @@
 ﻿using System.Text.Json;
 using BunnyBroker.Client;
 
+using ExampleClient.Common;
+
+
 await Task.Delay(2000);
 
 await using var channel = new BunnyChannel(new BunnyBrokerOptions { Url = "https://localhost:7110", User = "admin", Password = "admin"});
@@ -11,6 +14,7 @@ await channel.AddObserver<MessageLenght>("1", msg =>
     Console.WriteLine($"Lenght: {JsonSerializer.Serialize(msg)}");
     return Task.FromResult(true);
 });
+
 await channel.AddObserver<MessageContent>("2", msg =>
 {
     Console.WriteLine($"Content: {JsonSerializer.Serialize(msg)}");
@@ -30,10 +34,4 @@ while (!string.IsNullOrWhiteSpace(message))
     message = Console.ReadLine();
 }
 
-public class MessageLenght {
-    public int Length { get; set; }
-}
 
-public class MessageContent {
-    public required string Content { get; set; }
-}

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace BunnyBroker.Workers;
 
-public class BunnySenderWorker(BunnySenderQueue queue, IServiceScopeFactory scopeFactory, IHubContext<BunnyHub, IBunnyObserver> hubContext, ILogger<BunnySenderWorker> logger) : BackgroundService
+public class BunnySenderWorker(BunnySenderQueue queue, IServiceScopeFactory scopeFactory, IHubContext<BunnyHub, IBunnyObserver> hubContext, BunnyProcessor bunnyProcessor, ILogger<BunnySenderWorker> logger) : BackgroundService
 {
 	protected override async Task ExecuteAsync(CancellationToken ct) {
 		while (await queue.WaitForBunnyAsync(ct))
@@ -15,7 +15,8 @@ public class BunnySenderWorker(BunnySenderQueue queue, IServiceScopeFactory scop
 				var repository = scope.ServiceProvider.GetRequiredService<IBunnyMessageRepository>();
 				await repository.AddAsync(bunny.MapToEntity());
 			}
-			await hubContext.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);
+			//await hubContext.Clients.Groups(bunny.BunnyType).OnBunnyReceivedAsync(bunny);#
+			await bunnyProcessor.Process(bunny);
         }
     }
 }

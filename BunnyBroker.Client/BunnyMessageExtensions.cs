@@ -1,5 +1,6 @@
-﻿using System.Text.Json;
-using BunnyBroker.Contracts;
+﻿using BunnyBroker.Contracts;
+using Microsoft.AspNetCore.SignalR.Client;
+using System.Text.Json;
 
 namespace BunnyBroker.Client;
 
@@ -22,4 +23,8 @@ public static class BunnyMessageExtensions {
 		var type = types.First(x => x.FullName == message.BunnyType);
         return JsonSerializer.Deserialize(message.Body, type);
 	}
+
+	internal static bool CanProcess(this BunnyMessageProcessRequest request, HubConnection connection, string handlerName) {
+		return !request.ExcludedObservers.Any(x => x.ConnectionId == connection.ConnectionId && x.HandlerName == handlerName);
+    }
 }

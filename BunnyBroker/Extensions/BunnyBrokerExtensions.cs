@@ -13,6 +13,7 @@ public static class BunnyBrokerExtensions {
         services.AddSingleton<BunnySenderQueue>();
         services.AddSingleton<BunnyRegisterQueue>();
         services.AddSingleton<BunnyLogQueue>();
+        services.AddSingleton<BunnyProcessor>();
         services.AddSignalR();
         services.AddHostedService<BunnySenderWorker>();
         services.AddHostedService<BunnyRegisterWorker>();

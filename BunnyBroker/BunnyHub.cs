@@ -1,12 +1,9 @@
-﻿using BunnyBroker.Contracts;
-using BunnyBroker.Workers;
+﻿using BunnyBroker.Workers;
 using Microsoft.AspNetCore.SignalR;
-using BunnyMessageItem = BunnyBroker.Contracts.BunnyMessageItem;
-using BunnyTypeRegistry = BunnyBroker.Entities.BunnyTypeRegistry;
 
 namespace BunnyBroker;
 
-public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQueue, BunnyLogQueue logQueue, ILogger<BunnyHub> logger) : Hub<IBunnyObserver> {
+public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQueue, BunnyLogQueue logQueue, BunnyProcessor bunnyProcessor, ILogger<BunnyHub> logger) : Hub<IBunnyObserver> {
 	/// <summary>
 	/// Called when a new connection is established with the hub.
 	/// </summary>
@@ -20,21 +17,23 @@ public class BunnyHub(BunnySenderQueue senderQueue, BunnyRegisterQueue registerQ
 	/// <returns>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous disconnect.</returns>
 	public override Task OnDisconnectedAsync(Exception? exception) {
 		logger.LogInformation("Client disconnected: {ConnectionId}", Context.ConnectionId);
+		bunnyProcessor.Remove(Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
 	}
 
-	public async Task SendBunnyMessageAsync(BunnyMessage bunny) {
+	public async Task SendBunnyMessageAsync(Contracts.BunnyMessage bunny) {
 		logger.LogInformation($"Bunny sent: {bunny.Id}");
 		await senderQueue.SendAsync(bunny);
     }
 
 	public async Task StartObserving(string bunnyType, string uniqueHandlerName) {
 		logger.LogInformation($"Observing: {uniqueHandlerName} - {bunnyType}");
-        await registerQueue.SendAsync(new BunnyTypeRegistry {
+        await registerQueue.SendAsync(new Entities.BunnyTypeRegistry {
 			BunnyHandlerType = uniqueHandlerName,
 			BunnyType = bunnyType
         });
-		await Groups.AddToGroupAsync(Context.ConnectionId, bunnyType);
+		bunnyProcessor.Add(bunnyType, Context.ConnectionId, uniqueHandlerName);
+        await Groups.AddToGroupAsync(Context.ConnectionId, bunnyType);
 	}
 
 	public async Task BunnyProcessed(Guid bunnyId, string uniqueHandlerName, bool sucess) {
