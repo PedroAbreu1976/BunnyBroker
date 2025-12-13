@@ -59,7 +59,7 @@ public class BunnyMessageRepository(BunnyDbContext context, IBunnyTypeRegistryRe
 	        context.BunnyLogs.Add(new BunnyLog {
 				BunnyMessageId = message.Id,
                 BunnyHandlerType = typeRegistry.BunnyHandlerType,
-				BunnyTypeRegistry = typeRegistry
+				//BunnyTypeRegistry = typeRegistry
             });
         }
 

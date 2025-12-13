@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using BunnyBroker.Repository;
+using BunnyBroker.Repository.Cache;
 using BunnyBroker.Workers;
 
 
@@ -14,7 +15,9 @@ public static class BunnyBrokerExtensions {
         services.AddSingleton<BunnyRegisterQueue>();
         services.AddSingleton<BunnyLogQueue>();
         services.AddSingleton<BunnyProcessor>();
+        services.Decorate<IBunnyTypeRegistryRepository, CacheBunnyTypeRegistryRepository>();
         services.AddSignalR();
+        services.AddHybridCache();
         services.AddHostedService<BunnySenderWorker>();
         services.AddHostedService<BunnyRegisterWorker>();
         services.AddHostedService<BunnyLogWorker>();
